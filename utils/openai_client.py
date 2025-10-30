@@ -86,13 +86,16 @@ class OpenAIClient:
             if system:
                 messages = [{"role": "system", "content": system}] + messages
         
-        response = await self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
             **kwargs
-        )
+        }
+        if max_tokens is not None:
+            payload["max_tokens"] = max_tokens
+        
+        response = await self.client.chat.completions.create(**payload)
         
         # 统计 API 调用
         self.api_calls += 1
@@ -196,14 +199,17 @@ class OpenAIClient:
                 60
             )
         
-        stream = await self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            stream=True,
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "stream": True,
             **kwargs
-        )
+        }
+        if max_tokens is not None:
+            payload["max_tokens"] = max_tokens
+        
+        stream = await self.client.chat.completions.create(**payload)
         
         # 统计 API 调用
         self.api_calls += 1
@@ -221,4 +227,3 @@ class OpenAIClient:
 def create_client(base_url: str, api_key: str, rpm: Optional[int] = None, max_retry: int = 3) -> OpenAIClient:
     """创建OpenAI客户端"""
     return OpenAIClient(base_url, api_key, rpm, max_retry)
-

@@ -37,7 +37,8 @@ def extract_llm_params(request: ChatCompletionRequest) -> Dict[str, Any]:
     if request.top_p is not None:
         params['top_p'] = request.top_p
     if getattr(request, "reasoning_effort", None) is not None:
-        params["reasoning"] = {"effort": request.reasoning_effort}
+        params.setdefault("extra_body", {})
+        params["extra_body"]["reasoning"] = {"effort": request.reasoning_effort}
     
     return params
 
@@ -319,7 +320,7 @@ async def stream_chat_completion(
             llm_params=llm_params,
         )
     else:  # deepthink
-        # 深度思考 模式
+        # DeepThink 模式
         engine = DeepThinkEngine(
             client=client,
             model=model_config.model,
