@@ -64,6 +64,7 @@ class ChatCompletionRequest(BaseModel):
     
     # DeepThink 特定参数
     deep_think_options: Optional[Dict[str, Any]] = None
+    reasoning_effort: Optional[str | int | float] = None
 
 
 class ChatCompletionChoice(BaseModel):
@@ -172,4 +173,3 @@ class ProgressEvent(BaseModel):
     """进度事件"""
     type: str
     data: Dict[str, Any]
-

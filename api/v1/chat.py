@@ -34,6 +34,10 @@ def extract_llm_params(request: ChatCompletionRequest) -> Dict[str, Any]:
         params['temperature'] = request.temperature
     if request.max_tokens is not None:
         params['max_tokens'] = request.max_tokens
+    if request.top_p is not None:
+        params['top_p'] = request.top_p
+    if getattr(request, "reasoning_effort", None) is not None:
+        params["reasoning"] = {"effort": request.reasoning_effort}
     
     return params
 
@@ -315,7 +319,7 @@ async def stream_chat_completion(
             llm_params=llm_params,
         )
     else:  # deepthink
-        # DeepThink 模式
+        # 深度思考 模式
         engine = DeepThinkEngine(
             client=client,
             model=model_config.model,
@@ -494,4 +498,3 @@ async def chat_completions(
                 total_tokens=0
             )
         )
-
